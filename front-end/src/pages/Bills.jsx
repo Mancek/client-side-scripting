@@ -52,16 +52,9 @@ const Bills = () => {
       key: 'customerId',
       render: (customerId) => {
         if (!customerId) return <Tag color="default">No Customer</Tag>;
-        
-        return (
-          <EntityTable.CellWithReference
-            endpoint="Customer"
-            id={customerId}
-            render={(customer) => (
-              <Tag color="blue">{customer?.name} {customer?.surname}</Tag>
-            )}
-          />
-        );
+
+        const customer = customers.find(c => c.value === customerId);
+        return <Tag color="blue">{customer?.label}</Tag>;
       }
     },
     { 
@@ -71,15 +64,8 @@ const Bills = () => {
       render: (sellerId) => {
         if (!sellerId) return <Tag color="default">No Seller</Tag>;
         
-        return (
-          <EntityTable.CellWithReference
-            endpoint="Seller"
-            id={sellerId}
-            render={(seller) => (
-              <Tag color="green">{seller?.name} {seller?.surname}</Tag>
-            )}
-          />
-        );
+        const seller = sellers.find(s => s.value === sellerId);
+        return <Tag color="green">{seller?.label}</Tag>;
       }
     },
     { 

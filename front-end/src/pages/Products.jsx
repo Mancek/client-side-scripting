@@ -6,21 +6,32 @@ import { Tag } from 'antd';
 
 const Products = () => {
   const [subCategories, setSubCategories] = useState([]);
+  const [categories, setCategories] = useState([]);
 
   useEffect(() => {
-    const fetchSubCategories = async () => {
+    const fetchData = async () => {
       try {
-        const response = await api.get('/SubCategory');
-        setSubCategories(response.data.map(subCat => ({
+        const [subCategoriesResponse, categoriesResponse] = await Promise.all([
+          api.get('/SubCategory'),
+          api.get('/Category')
+        ]);
+
+        setSubCategories(subCategoriesResponse.data.map(subCat => ({
           value: subCat.id,
-          label: subCat.name
+          label: subCat.name,
+          categoryId: subCat.categoryId
+        })));
+
+        setCategories(categoriesResponse.data.map(cat => ({
+          value: cat.id,
+          label: cat.name
         })));
       } catch (error) {
-        console.error('Failed to fetch subcategories:', error);
+        console.error('Failed to fetch data:', error);
       }
     };
 
-    fetchSubCategories();
+    fetchData();
   }, []);
 
   const columns = [
@@ -51,39 +62,24 @@ const Products = () => {
       key: 'price',
       render: (price) => `$${price?.toFixed(2)}`
     },
-    { 
+    {
       title: 'Category', 
       dataIndex: 'subCategoryId',
       key: 'category',
-      render: (subCategoryId) => (
-        <EntityTable.CellWithReference
-          endpoint="SubCategory"
-          id={subCategoryId}
-          render={(subCategory) => (
-            <EntityTable.CellWithReference
-              endpoint="Category"
-              id={subCategory?.categoryId}
-              render={(category) => (
-                <Tag color="blue">{category?.name}</Tag>
-              )}
-            />
-          )}
-        />
-      )
+      render: (subCategoryId) => {
+        const subCategory = subCategories.find(sub => sub.value === subCategoryId);
+        const category = categories.find(cat => cat.value === subCategory?.categoryId);
+        return <Tag color="blue">{category?.label}</Tag>;
+      }
     },
     { 
       title: 'SubCategory', 
       dataIndex: 'subCategoryId',
       key: 'subCategory',
-      render: (subCategoryId) => (
-        <EntityTable.CellWithReference
-          endpoint="SubCategory"
-          id={subCategoryId}
-          render={(subCategory) => (
-            <Tag color="green">{subCategory?.name}</Tag>
-          )}
-        />
-      )
+      render: (subCategoryId) => {
+        const subCategory = subCategories.find(sub => sub.value === subCategoryId);
+        return <Tag color="green">{subCategory?.label}</Tag>;
+      }
     }
   ];
 

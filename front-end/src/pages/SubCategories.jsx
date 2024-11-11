@@ -38,15 +38,12 @@ const SubCategories = () => {
       title: 'Category', 
       dataIndex: 'categoryId', 
       key: 'categoryId',
-      render: (categoryId) => (
-        <EntityTable.CellWithReference
-          endpoint="Category"
-          id={categoryId}
-          render={(category) => (
-            <Tag color="blue">{category?.name}</Tag>
-          )}
-        />
-      )
+      render: (categoryId) => {
+        if (!categoryId) return <Tag color="default">No Category</Tag>;
+
+        const category = categories.find(cat => cat.value === categoryId);
+        return <Tag color="blue">{category?.label}</Tag>;
+      }
     }
   ];
 

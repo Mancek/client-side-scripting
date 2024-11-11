@@ -171,7 +171,7 @@ const EntityTable = ({ title, endpoint, columns, formFields, onRow, form: extern
     ...columns.map(col => ({
       ...col,
       sorter: true,
-      sortDirections: ['ascend', 'descend', 'ascend']
+      sortDirections: ['ascend', 'descend']
     })),
     actionColumn
   ];

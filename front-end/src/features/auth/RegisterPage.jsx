@@ -28,7 +28,6 @@ const RegisterPage = () => {
         password: values.password
       });
 
-      loginResponse.data.userEmail = values.email;
       dispatch(setCredentials(loginResponse.data));
       message.success('Registration successful');
       navigate('/');

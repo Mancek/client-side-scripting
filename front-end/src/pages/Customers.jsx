@@ -18,19 +18,18 @@ const Customers = () => {
     const fetchInitialData = async () => {
       try {
         setLoading(true);
+        
+        const [cityResponse, cardResponse] = await Promise.all([
+          api.get('/City'),
+          api.get('/CreditCard')
+        ])
 
-        const cityResponse = await api.get('/City');
         setCities(cityResponse.data.map(city => ({
           value: city.id,
           label: city.name
         })));
 
-        const cardResponse = await api.get('/CreditCard');
-        const cardData = {};
-        cardResponse.data.forEach(card => {
-          cardData[card.id] = card;
-        });
-        setCreditCards(cardData);
+        setCreditCards(Object.fromEntries(cardResponse.data.map(card => [card.id, card])));
       } catch (error) {
         console.error('Failed to fetch initial data:', error);
       } finally {
@@ -160,45 +159,33 @@ const Customers = () => {
     { 
       title: 'ID', 
       dataIndex: 'id', 
-      key: 'id',
-      sorter: true,
-      sortDirections: ['ascend', 'descend']
+      key: 'id'
     },
     { 
       title: 'Name', 
       dataIndex: 'name', 
-      key: 'name',
-      sorter: true,
-      sortDirections: ['ascend', 'descend']
+      key: 'name'
     },
     { 
       title: 'Surname', 
       dataIndex: 'surname', 
-      key: 'surname',
-      sorter: true,
-      sortDirections: ['ascend', 'descend']
+      key: 'surname'
     },
     { 
       title: 'Email', 
       dataIndex: 'email', 
       key: 'email',
-      sorter: true,
-      sortDirections: ['ascend', 'descend'],
       render: (email) => <a href={`mailto:${email}`}><Tag color="blue">{email}</Tag></a>,
     },
     { 
       title: 'Telephone', 
       dataIndex: 'telephone', 
-      key: 'telephone',
-      sorter: true,
-      sortDirections: ['ascend', 'descend']
+      key: 'telephone'
     },
     { 
       title: 'City', 
       dataIndex: 'cityId',
       key: 'cityId',
-      sorter: true,
-      sortDirections: ['ascend', 'descend'],
       render: (cityId) => {
         if (!cityId) return <Tag color="default">No City</Tag>;
         
