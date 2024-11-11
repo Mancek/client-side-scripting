@@ -1,0 +1,102 @@
+[
+  {
+    "id": 1,
+    "guid": "faea54ff-1a34-4222-946a-ef923411d9b7",
+    "name": "Beauty"
+  },
+  {
+    "id": 2,
+    "guid": "dfb99e2f-cd76-4b1c-996b-c7cfe90dca87",
+    "name": "Music"
+  },
+  {
+    "id": 3,
+    "guid": "8b54a5bf-07cc-4bcc-aa61-c39aa5e6497f",
+    "name": "Garden"
+  },
+  {
+    "id": 4,
+    "guid": "b6ca6feb-5d8a-4275-95fc-e9ee34c753ef",
+    "name": "Outdoors"
+  },
+  {
+    "id": 5,
+    "guid": "a49b4a9b-2f78-4301-8f54-e95c1fff95a1",
+    "name": "Tools"
+  },
+  {
+    "id": 6,
+    "guid": "50681664-88db-4b09-b50a-05e91e204d7a",
+    "name": "Computers"
+  },
+  {
+    "id": 7,
+    "guid": "028ef3c8-9367-4571-9a50-778bafb84396",
+    "name": "Music"
+  },
+  {
+    "id": 8,
+    "guid": "b0868627-1866-49ea-957a-ec8a7fb6b0c3",
+    "name": "Health"
+  },
+  {
+    "id": 9,
+    "guid": "40f29cd9-f74a-4ce5-bc05-08e81f34997e",
+    "name": "Kids"
+  },
+  {
+    "id": 10,
+    "guid": "2b7e031b-28f7-4f59-b958-38857905a028",
+    "name": "Outdoors"
+  },
+  {
+    "id": 11,
+    "guid": "9ed2ca46-7275-4e84-bafb-8fa2ecc44274",
+    "name": "Electronics"
+  },
+  {
+    "id": 12,
+    "guid": "2184fb10-7490-4aab-a52c-63c733098abb",
+    "name": "Kids"
+  },
+  {
+    "id": 13,
+    "guid": "0ed9460d-8cc9-4668-86fa-18ba63a33ca5",
+    "name": "Beauty"
+  },
+  {
+    "id": 14,
+    "guid": "22a822d4-925f-4ab4-b6f6-2c363db488c4",
+    "name": "Beauty"
+  },
+  {
+    "id": 15,
+    "guid": "95dba1c7-4bdb-4a35-98a7-81c34a846c6f",
+    "name": "Outdoors"
+  },
+  {
+    "id": 16,
+    "guid": "54402680-8214-43b8-a87e-d7bba7135948",
+    "name": "Movies"
+  },
+  {
+    "id": 17,
+    "guid": "9966cee4-048a-471a-9c42-d76e62bbbfc9",
+    "name": "Music"
+  },
+  {
+    "id": 18,
+    "guid": "07ee7162-43de-4bd9-a885-64151cc3e803",
+    "name": "Toys"
+  },
+  {
+    "id": 19,
+    "guid": "959b0d43-2178-49cc-a12f-3941ef3d1e3a",
+    "name": "Automotive"
+  },
+  {
+    "id": 20,
+    "guid": "855cfcad-d802-45e5-8f34-232c9c58f32c",
+    "name": "Outdoors"
+  }
+]
