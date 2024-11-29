@@ -1,9 +1,11 @@
-import { Form, InputNumber, Select } from 'antd';
+import { Col, Form, Input, InputNumber, Row, Select, Typography } from 'antd';
 import EntityTable from '../components/EntityTable';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useLocation } from 'react-router-dom';
 import { Tag } from 'antd';
 import api from '../api/axios';
+
+const { Title, Text } = Typography;
 
 const Items = () => {
   const location = useLocation();
@@ -15,6 +17,52 @@ const Items = () => {
   const [selectedCategory, setSelectedCategory] = useState(null);
   const [selectedSubCategory, setSelectedSubCategory] = useState(null);
   const [form] = Form.useForm();
+  const [billInfo, setBillInfo] = useState(null);
+  const [totalItems, setTotalItems] = useState(0);
+  const [totalPrice, setTotalPrice] = useState(0);
+
+  const fetchAndUpdateTotals = useCallback(async () => {
+    if (billId) {
+      try {
+        const response = await api.get(`/Item?billId=${billId}`);
+        const items = response.data;
+        const calculatedTotalItems = new Set(items.map(item => item.id)).size;
+        const calculatedTotalPrice = items.reduce((sum, item) => sum + item.totalPrice, 0);
+        setTotalItems(calculatedTotalItems);
+        setTotalPrice(calculatedTotalPrice);
+      } catch (error) {
+        console.error('Failed to fetch items:', error);
+      }
+    }
+  }, [billId]);
+
+  useEffect(() => {
+    fetchAndUpdateTotals();
+  }, [billId, fetchAndUpdateTotals]);
+
+  useEffect(() => {
+    const fetchBillInfo = async () => {
+      if (billId) {
+        try {
+          const response = await api.get(`/Bill/${billId}`);
+          const bill = response.data;
+          const customerResponse = await api.get(`/Customer/${bill.customerId}`);
+          const customer = customerResponse.data;
+
+          setBillInfo({
+            customerId: customer.id,
+            customerName: `${customer.name} ${customer.surname}`,
+            customerTelephone: customer.telephone,
+            customerEmail: customer.email,
+            billId: bill.id
+          });
+        } catch (error) {
+          console.error('Failed to fetch bill information:', error);
+        }
+      }
+    };
+    fetchBillInfo();
+  }, [billId, form]);
 
   useEffect(() => {
     const fetchCategories = async () => {
@@ -168,8 +216,28 @@ const Items = () => {
     }
   };
 
+  const handleBeforeSubmit = (values) => {
+    const product = products.find(p => p.value === values.productId);
+    const totalPrice = (product?.price || 0) * values.quantity;
+    const bill = values.billId ?? billId;
+
+    return {
+      id: values.id,
+      billId: bill,
+      productId: values.productId,
+      quantity: values.quantity,
+      totalPrice: totalPrice
+    };
+  };
+
   const formFields = (
     <>
+      <Form.Item name="id" hidden={true}>
+        <Input />
+      </Form.Item>
+      <Form.Item name="billId" hidden={true}>
+        <Input />
+      </Form.Item>
       <Form.Item
         name="categoryId"
         label="Category"
@@ -245,15 +313,39 @@ const Items = () => {
   );
 
   return (
-    <EntityTable 
-    title={billId ? `Items for bill #${billId}` : "Items"}
-      endpoint="Item" 
-      columns={columns}
-      formFields={formFields}
-      form={form}
-      onEdit={handleEdit}
-      defaultFilters={billId ? { billId } : undefined}
-    />
+    <>
+      {billId && billInfo && (
+        <Row style={{ marginBottom: '1rem' }}>
+          <Col span={20}>
+            <Title level={1}>{billInfo.customerName}</Title>
+          </Col>
+          <Col span={4}>
+            <Text strong>Customer ID:</Text> {billInfo.customerId}
+            <br />
+            <Text strong>Bill ID:</Text> {billInfo.billId}
+            <br />
+            <Text strong>Telephone:</Text> {billInfo.customerTelephone}
+            <br />
+            <Text strong>Email:</Text> <a href={`mailto:${billInfo.customerEmail}`}>{billInfo.customerEmail}</a>
+            <br />
+            <Text strong>Total items:</Text> {totalItems}
+            <br />
+            <Text strong>Total price: ${totalPrice.toFixed(2)}</Text> 
+
+          </Col>
+        </Row>
+      )}
+      <EntityTable
+        title={billId ? `Items for bill #${billId}` : "Items"}
+        endpoint="Item"
+        columns={columns}
+        formFields={formFields}
+        form={form}
+        onEdit={handleEdit}
+        defaultFilters={billId ? { billId } : undefined}
+        transformSubmitData={handleBeforeSubmit}
+        onAfterSubmit={fetchAndUpdateTotals} />
+    </>
   );
 };
 

@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { Table, Card, message, Button, Space, Modal, Form, Input, Spin } from 'antd';
 import { EditOutlined, DeleteOutlined, PlusOutlined, SearchOutlined } from '@ant-design/icons';
 import api from '../api/axios';
+import { CellWithReferenceProps, EntityTableProps } from './types';
 
 const CellWithReference = ({ endpoint, id, render }) => {
   const [data, setData] = useState(null);
@@ -34,7 +35,18 @@ const CellWithReference = ({ endpoint, id, render }) => {
   return render(data);
 };
 
-const EntityTable = ({ title, endpoint, columns, formFields, onRow, form: externalForm, onEdit: externalOnEdit, defaultFilters }) => {
+const EntityTable = ({
+  title,
+  endpoint,
+  columns,
+  formFields,
+  onRow,
+  form: externalForm,
+  onEdit: externalOnEdit,
+  defaultFilters,
+  transformSubmitData,
+  onAfterSubmit
+ }) => {
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(true);
   const [modalVisible, setModalVisible] = useState(false);
@@ -100,13 +112,16 @@ const EntityTable = ({ title, endpoint, columns, formFields, onRow, form: extern
     }, 300);
 
     return () => clearTimeout(debouncer);
-  }, [endpoint, title, searchText, sortField, sortOrder, pagination.current, pagination.pageSize, defaultFilters]);
+  }, [endpoint, title, searchText, sortField, sortOrder, pagination, defaultFilters]);
 
   const handleDelete = async (id) => {
     try {
       await api.delete(`/${endpoint}/${id}`);
       message.success('Deleted successfully');
       setData(data.filter(item => item.id !== id));
+      if (onAfterSubmit) {
+        onAfterSubmit();
+      }
     } catch (error) {
       message.error(`Failed to delete: ${error.message}`);
     }
@@ -114,6 +129,8 @@ const EntityTable = ({ title, endpoint, columns, formFields, onRow, form: extern
 
   const handleSubmit = async (values) => {
     try {
+      values = transformSubmitData ? transformSubmitData(values) : values;
+
       if (editingRecord) {
         await api.put(`/${endpoint}/${editingRecord.id}`, values);
         setData(data.map(item => 
@@ -128,6 +145,9 @@ const EntityTable = ({ title, endpoint, columns, formFields, onRow, form: extern
       setModalVisible(false);
       form.resetFields();
       setEditingRecord(null);
+      if (onAfterSubmit) {
+        onAfterSubmit();
+      }
     } catch (error) {
       message.error(`Failed to save: ${error.message}`);
     }
@@ -153,16 +173,39 @@ const EntityTable = ({ title, endpoint, columns, formFields, onRow, form: extern
           }}
         />
         <Button
-          icon={<DeleteOutlined />}
-          danger
-          onClick={(e) => {
-            e.stopPropagation();
-            Modal.confirm({
-            title: 'Are you sure you want to delete this item?',
-              onOk: () => handleDelete(record.id),
-            });
-          }}
-        />
+        icon={<DeleteOutlined />}
+        danger
+        onClick={(e) => {
+          e.stopPropagation();
+          Modal.confirm({
+            title: 'Delete Confirmation',
+            icon: <DeleteOutlined style={{ color: '#ff4d4f' }} />,
+            content: (
+              <div style={{ padding: '16px 0' }}>
+                <p style={{ fontSize: '16px', marginBottom: '8px' }}>
+                  Are you sure you want to delete this item?
+                </p>
+                <p style={{ color: '#8c8c8c' }}>
+                  This action cannot be undone.
+                </p>
+              </div>
+            ),
+            okText: 'Delete',
+            cancelText: 'Cancel',
+            okButtonProps: {
+              danger: true,
+              icon: <DeleteOutlined />
+            },
+            cancelButtonProps: {
+              type: 'text'
+            },
+            centered: true,
+            maskClosable: true,
+            className: 'delete-confirmation-modal',
+            onOk: () => handleDelete(record.id),
+          });
+        }}
+      />
       </Space>
     ),
   };
@@ -248,6 +291,9 @@ const EntityTable = ({ title, endpoint, columns, formFields, onRow, form: extern
     </Card>
   );
 };
+
+CellWithReference.propTypes = CellWithReferenceProps;
+EntityTable.propTypes = EntityTableProps;
 
 EntityTable.CellWithReference = CellWithReference;
 

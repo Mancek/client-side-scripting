@@ -2,6 +2,7 @@ import { Upload, message } from 'antd';
 import { PlusOutlined, LoadingOutlined } from '@ant-design/icons';
 import { useState } from 'react';
 import { getBase64, imageBeforeUpload } from '../../util/imageUtil';
+import { AvatarUploadProps } from '../types';
 
 const AvatarUpload = ({ avatarUrl, onAvatarChange }) => {
   const [loading, setLoading] = useState(false);
@@ -57,5 +58,7 @@ const AvatarUpload = ({ avatarUrl, onAvatarChange }) => {
     </Upload>
   );
 };
+
+AvatarUpload.propTypes = AvatarUploadProps;
 
 export default AvatarUpload; 

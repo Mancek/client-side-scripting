@@ -13,6 +13,7 @@ import Sellers from './pages/Sellers';
 import Items from './pages/Items';
 import Products from './pages/Products';
 import SubCategories from './pages/SubCategories';
+import { ProtectedRouteProps } from './components/types';
 
 const ProtectedRoute = ({ children }) => {
   const { isAuthenticated } = useSelector((state) => state.auth);
@@ -49,5 +50,7 @@ const App = () => {
     </BrowserRouter>
   );
 };
+
+ProtectedRoute.propTypes = ProtectedRouteProps
 
 export default App;
