@@ -112,7 +112,7 @@ const EntityTable = ({
     }, 300);
 
     return () => clearTimeout(debouncer);
-  }, [endpoint, title, searchText, sortField, sortOrder, pagination, defaultFilters]);
+  }, [endpoint, title, searchText, sortField, sortOrder, pagination.current, pagination.size, defaultFilters ]);
 
   const handleDelete = async (id) => {
     try {

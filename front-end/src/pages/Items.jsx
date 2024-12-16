@@ -4,6 +4,7 @@ import { useState, useEffect, useCallback } from 'react';
 import { useLocation } from 'react-router-dom';
 import { Tag } from 'antd';
 import api from '../api/axios';
+import BillInfo from '../models/BillInfo';
 
 const { Title, Text } = Typography;
 
@@ -44,18 +45,13 @@ const Items = () => {
     const fetchBillInfo = async () => {
       if (billId) {
         try {
-          const response = await api.get(`/Bill/${billId}`);
-          const bill = response.data;
+          const billResponse = await api.get(`/Bill/${billId}`);
+          const bill = billResponse.data;
           const customerResponse = await api.get(`/Customer/${bill.customerId}`);
           const customer = customerResponse.data;
-
-          setBillInfo({
-            customerId: customer.id,
-            customerName: `${customer.name} ${customer.surname}`,
-            customerTelephone: customer.telephone,
-            customerEmail: customer.email,
-            billId: bill.id
-          });
+  
+          const billInfo = BillInfo.fromData(bill, customer);
+          setBillInfo(billInfo);
         } catch (error) {
           console.error('Failed to fetch bill information:', error);
         }

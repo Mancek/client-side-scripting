@@ -1,29 +1,40 @@
 import { Form, Input } from 'antd';
 import EntityTable from '../components/EntityTable';
+import React from 'react';
 
-const Cities = () => {
-  const columns = [
+// LO1 - ES5
+var Cities = function() {
+  var columns = [
     {
       title: 'ID',
       dataIndex: 'id',
       key: 'id',
-      width: '50%',
+      width: '50%'
     },
     {
       title: 'Name',
       dataIndex: 'name',
       key: 'name',
-      width: '50%',
-    },
+      width: '50%'
+    }
   ];
 
-  const formFields = (
-    <Form.Item name="name" label="Name" rules={[{ required: true }]}>
-      <Input />
-    </Form.Item>
+  var formFields = React.createElement(
+    Form.Item,
+    {
+      name: "name",
+      label: "Name",
+      rules: [{ required: true }]
+    },
+    React.createElement(Input, null)
   );
 
-  return <EntityTable title="Cities" endpoint="City" columns={columns} formFields={formFields} />;
+  return React.createElement(EntityTable, {
+    title: "Cities",
+    endpoint: "City",
+    columns: columns,
+    formFields: formFields
+  });
 };
 
 export default Cities;
